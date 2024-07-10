@@ -1,0 +1,11 @@
+services:
+  btc22.0:
+    build: .
+    ports:
+      - "8333:8333"
+    volumes:
+      - data:/app/data
+    command: -datadir=/app/data -prune=550
+
+volumes:
+  data:
