@@ -1,0 +1,50 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - btc22
+jobs:
+  build:
+    permissions:
+      id-token: write # This is required for requesting the JWT for authing into aws via OIDC
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      working-directory: ./btc22
+      run: bash build.sh 
+    - uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: us-east-2
+        role-to-assume: arn:aws:iam::982065454085:role/prod-ci
+        role-skip-session-tagging: true
+    - name: Push to ECR
+      working-directory: ./btc22
+      run: bash tag_push_ecr.bash $(git rev-parse --short "$GITHUB_SHA")
+
+  deploy:
+    needs: build
+    permissions:
+      id-token: write # This is required for requesting the JWT for authing into aws via OIDC
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: us-east-2
+        role-to-assume: arn:aws:iam::982065454085:role/prod-ci
+        role-skip-session-tagging: true
+    - name: Generate kubeconfig
+      working-directory: ./k8s
+      run: aws eks --region us-east-2 update-kubeconfig --name bitcoin-eks-t2ZVZtAG
+    - name: Deploy image version to k8s
+      working-directory: ./k8s
+      run: | 
+        cat deployment.yaml | sed "s/{{version}}/$(git rev-parse --short "$GITHUB_SHA")/g" | kubectl apply -f -
+        kubectl apply -f pvc.yaml
+
