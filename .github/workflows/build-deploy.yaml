@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - btc22
+      - btc22/**
 jobs:
   build:
     permissions:
