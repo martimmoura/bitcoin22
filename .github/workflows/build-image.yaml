@@ -29,6 +29,7 @@ jobs:
       with:
         aws-region: us-east-2
         role-to-assume: arn:aws:iam::982065454085:role/prod-ci
+        role-skip-session-tagging: true
     - name: Push to ECR
       working-directory: ./btc22
       run: bash tag_push_ecr.bash ${{  github.ref_name }}
