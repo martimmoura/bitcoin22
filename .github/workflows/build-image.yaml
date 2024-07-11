@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - 'v*.*.*'
+    branches:
+      - feat
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
@@ -23,6 +25,10 @@ jobs:
     - name: Build the Docker image
       working-directory: ./btc22
       run: bash build.sh ${{  github.ref_name }}
+    - uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: us-east-2
+        role-to-assume: prod-ci
     - name: Push to ECR
       working-directory: ./btc22
-      run: bash tag_push_ecr.bash
+      run: bash tag_push_ecr.bash ${{  github.ref_name }}
