@@ -1,11 +1,6 @@
 name: Docker Image CI
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'
-    branches:
-      - feat
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
@@ -31,6 +26,7 @@ jobs:
         role-to-assume: arn:aws:iam::982065454085:role/prod-ci
         role-skip-session-tagging: true
     - name: Push to ECR
+      if: startsWith(github.ref, 'refs/tags/v')
       working-directory: ./btc22
       run: bash tag_push_ecr.bash ${{  github.ref_name }}
     
