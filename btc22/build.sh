@@ -1,3 +1,3 @@
 #!/bin/bash
-docker build . -t btc22:$1 -t btc22
+docker build . -t btc22
 
