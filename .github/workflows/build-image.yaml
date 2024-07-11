@@ -1,11 +1,9 @@
 name: Docker Image CI
 
 on:
-  pull_request:
-    branches: [ "main" ]
-  workflow_dispatch:
-    
-
+  push:
+    paths:
+      - btc22
 jobs:
   build:
     permissions:
@@ -14,12 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Set output
-      id: vars
-      run: echo "tag=${{  github.ref_name }}" >> $GITHUB_OUTPUT
     - name: Build the Docker image
       working-directory: ./btc22
-      run: bash build.sh ${{  github.ref_name }}
+      run: bash build.sh 
     - uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: us-east-2
@@ -27,5 +22,5 @@ jobs:
         role-skip-session-tagging: true
     - name: Push to ECR
       working-directory: ./btc22
-      run: bash tag_push_ecr.bash ${{  github.ref_name }}
+      run: bash tag_push_ecr.bash
     
