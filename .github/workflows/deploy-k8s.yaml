@@ -26,6 +26,11 @@ jobs:
     - name: Generate kubeconfig
       working-directory: ./k8s
       run: aws eks --region us-east-2 update-kubeconfig --name bitcoin-eks-t2ZVZtAG
+    - uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: us-east-2
+        role-to-assume: arn:aws:iam::982065454085:role/prod-ci
+        role-skip-session-tagging: true
     - name: Deploy image version to k8s
       working-directory: ./k8s
       run: kubectl get pods -n btc
