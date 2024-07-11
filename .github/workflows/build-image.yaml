@@ -12,7 +12,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: Set output
@@ -21,4 +20,6 @@ jobs:
     - name: Build the Docker image
       working-directory: ./btc22
       run: bash build.sh ${{  github.ref_name }}
-
+    - name: Push to ECR
+      working-directory: ./btc22
+      run: bash tag_push_ecr.bash
