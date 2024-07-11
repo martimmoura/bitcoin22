@@ -7,5 +7,6 @@ services:
       - data:/app/data
     command: -datadir=/app/data -prune=550
 
+
 volumes:
   data:
