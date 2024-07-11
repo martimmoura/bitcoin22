@@ -28,7 +28,7 @@ jobs:
     - uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: us-east-2
-        role-to-assume: prod-ci
+        role-to-assume: arn:aws:iam::982065454085:role/prod-ci
     - name: Push to ECR
       working-directory: ./btc22
       run: bash tag_push_ecr.bash ${{  github.ref_name }}
