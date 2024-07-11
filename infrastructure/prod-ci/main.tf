@@ -44,7 +44,7 @@ data "aws_iam_policy_document" "trust_policy_prod-ci" {
       variable = "token.actions.githubusercontent.com:sub"
 
       values = [
-        "repo:martimmoura/bitcoin22:ref:refs/*"
+        "repo:martimmoura/bitcoin22:*"
       ]
     }
   }

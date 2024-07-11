@@ -1,3 +1,5 @@
+data "aws_caller_identity" "this" {}
+
 data "aws_availability_zones" "available" {
   filter {
     name   = "opt-in-status"
@@ -99,4 +101,39 @@ resource "aws_ecr_repository" "btc" {
   image_scanning_configuration {
     scan_on_push = true
   }
+}
+
+data "aws_iam_policy_document" "repo_policy" {
+  statement {
+    sid    = "allow read and write to repo"
+    effect = "Allow"
+
+    principals {
+      type        = "AWS"
+      identifiers = [var.ci_role_arn]
+    }
+
+    actions = [
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:GetAuthorizationToken",
+      "ecr:BatchGetImage",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:PutImage",
+      "ecr:InitiateLayerUpload",
+      "ecr:UploadLayerPart",
+      "ecr:CompleteLayerUpload",
+      "ecr:DescribeRepositories",
+      "ecr:GetRepositoryPolicy",
+      "ecr:ListImages",
+      "ecr:DeleteRepository",
+      "ecr:BatchDeleteImage",
+      "ecr:SetRepositoryPolicy",
+      "ecr:DeleteRepositoryPolicy",
+    ]
+  }
+}
+
+resource "aws_ecr_repository_policy" "repo_policy" {
+  repository = aws_ecr_repository.btc.name
+  policy     = data.aws_iam_policy_document.repo_policy.json
 }
