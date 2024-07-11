@@ -19,5 +19,5 @@ jobs:
       id: vars
       run: echo "tag=${{  github.ref_name }}" >> $GITHUB_OUTPUT
     - name: Build the Docker image
-      run: ./btc22/build.sh ${{  github.ref_name }}
+      run: cd btc22 & build.sh ${{  github.ref_name }}
 
