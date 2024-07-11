@@ -18,6 +18,11 @@ resource "aws_iam_openid_connect_provider" "github" {
     thumbprint_list = data.tls_certificate.openid_connector_thumbprint.certificates.*.sha1_fingerprint
 }
 
+resource "aws_iam_policy_attachment" "prod-ci_ecr_rw"{
+  name = "prod-ci_ecr_policy_attachment"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
+  roles = [ aws_iam_role.prod-ci ]
+}
 resource "aws_iam_role" "prod-ci" {
   name = "prod-ci"
   assume_role_policy = data.aws_iam_policy_document.trust_policy_prod-ci.json

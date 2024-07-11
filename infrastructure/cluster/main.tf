@@ -110,7 +110,7 @@ data "aws_iam_policy_document" "repo_policy" {
 
     principals {
       type        = "AWS"
-      identifiers = [var.ci_role_arn]
+      identifiers = [data.aws_caller_identity.this.account_id]
     }
 
     actions = [
