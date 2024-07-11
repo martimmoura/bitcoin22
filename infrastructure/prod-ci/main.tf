@@ -18,10 +18,27 @@ resource "aws_iam_openid_connect_provider" "github" {
     thumbprint_list = data.tls_certificate.openid_connector_thumbprint.certificates.*.sha1_fingerprint
 }
 
+
+#to be able to push to ecr
 resource "aws_iam_policy_attachment" "prod-ci_ecr_rw"{
   name = "prod-ci_ecr_policy_attachment"
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
-  roles = [ aws_iam_role.prod-ci ]
+  roles = [ aws_iam_role.prod-ci.name ]
+}
+
+data "aws_iam_policy_document" "prod-ci_describe_eks" {
+    statement {
+    actions = ["eks:DescribeCluster"]
+     
+    resources = [
+      var.cluster_arn
+    ]
+  }
+}
+resource "aws_iam_role_policy" "prod-ci_describe_eks" {
+  name = "prod-ci_describe_eks"
+  role = aws_iam_role.prod-ci.name
+  policy = data.aws_iam_policy_document.prod-ci_describe_eks.json
 }
 resource "aws_iam_role" "prod-ci" {
   name = "prod-ci"
@@ -36,7 +53,8 @@ data "aws_iam_policy_document" "trust_policy_prod-ci" {
       identifiers = [data.aws_caller_identity.this.account_id]
     }
   }
-
+#not part of exercise, using this role for pushing images to ecr and deploying to eks cluster. 
+#assume role via github oidc provider
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
     principals {

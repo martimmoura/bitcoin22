@@ -23,7 +23,9 @@ jobs:
         aws-region: us-east-2
         role-to-assume: arn:aws:iam::982065454085:role/prod-ci
         role-skip-session-tagging: true
-    - name: Deploy image version to k8s
+    - name: Generate kubeconfig
       working-directory: ./k8s
       run: aws eks --region us-east-2 update-kubeconfig --name bitcoin-eks-t2ZVZtAG
-    
+    - name: Deploy image version to k8s
+      working-directory: ./k8s
+      run: kubectl get pods -n btc
