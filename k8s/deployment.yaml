@@ -16,7 +16,7 @@ spec:
         app: btc22
     spec:
       containers:
-      - image: 982065454085.dkr.ecr.us-east-2.amazonaws.com/btc22:v1.0.0
+      - image: 982065454085.dkr.ecr.us-east-2.amazonaws.com/btc22:latest
         name: btc
         args:
         - -datadir=/app/data
