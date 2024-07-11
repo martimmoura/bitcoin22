@@ -6,7 +6,10 @@ RUN apt-get update && apt-get install -y wget
 
 #get release and checksums
 RUN wget https://bitcoincore.org/bin/bitcoin-core-22.0/bitcoin-22.0-x86_64-linux-gnu.tar.gz
-RUN wget https://bitcoincore.org/bin/bitcoin-core-22.0/SHA256SUMS
+#RUN wget https://bitcoincore.org/bin/bitcoin-core-22.0/SHA256SUMS
+
+COPY SHA256SUMS .
+
 #run checksum, fails build if bad
 RUN sha256sum -c SHA256SUMS --ignore-missing --status
 #extract
