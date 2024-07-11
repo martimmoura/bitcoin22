@@ -16,12 +16,22 @@ spec:
         app: btc22
     spec:
       containers:
-      - image: busybox
+      - image: 982065454085.dkr.ecr.us-east-2.amazonaws.com/btc22:latest
         name: btc
+        args:
+        - -datadir=/app/data
+        - -prune=550
+
         volumeMounts:
-        - mountPath: "/var/www/html"
+        - mountPath: "/app/data"
           name: btc-pvc
-        resources: {}
+        resources:
+          requests:
+            cpu: 450m
+            memory: 500Mi
+          limits:
+            cpu: 1
+
       volumes:
       - name: btc-pvc
         persistentVolumeClaim:

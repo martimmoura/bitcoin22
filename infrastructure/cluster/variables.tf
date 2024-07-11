@@ -12,3 +12,8 @@ variable "isOn" {
   type = bool
   default = true
 }
+
+variable "ci_role_arn"{
+  type = string
+  default = "arn:aws:iam::982065454085:role/prod-ci"
+}

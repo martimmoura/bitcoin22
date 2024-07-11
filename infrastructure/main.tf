@@ -1,3 +1,3 @@
 module "prod-ci_principals" {
-    source = "./access_6"
+    source = "./prod-ci"
 }

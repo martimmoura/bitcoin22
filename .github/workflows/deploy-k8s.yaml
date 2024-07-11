@@ -1,0 +1,33 @@
+name: Deploy to k8s
+
+on:
+  push:
+    branches:
+      - main
+    
+jobs:
+  deploy:
+    permissions:
+      id-token: write # This is required for requesting the JWT for authing into aws via OIDC
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set output
+      id: vars
+      run: echo "tag=${{  github.ref_name }}" >> $GITHUB_OUTPUT
+    - uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: us-east-2
+        role-to-assume: arn:aws:iam::982065454085:role/prod-ci
+        role-skip-session-tagging: true
+    - name: Generate kubeconfig
+      working-directory: ./k8s
+      run: aws eks --region us-east-2 update-kubeconfig --name bitcoin-eks-t2ZVZtAG
+    # - name: print kubeconfig
+    #   run: cat /home/runner/.kube/config
+    # - name: get token
+    #  run: aws --region us-east-2 eks get-token --cluster-name bitcoin-eks-t2ZVZtAG 
+    - name: Deploy image version to k8s
+      working-directory: ./k8s
+      run: kubectl apply -f .
