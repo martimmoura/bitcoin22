@@ -20,9 +20,12 @@ ARG GID=1000
 RUN groupadd -g "${GID}" bitcoin \
   && useradd --create-home --no-log-init -u "${UID}" -g "${GID}" bitcoin
 
-USER bitcoin
-COPY --from=builder --chown=${UID}:${GID} /tmp/btc22/bitcoin-22.0 /app
+#we dont --chown here, executable binaries should be read+execute only for everyone other than root.
+COPY --from=builder /tmp/btc22/bitcoin-22.0 /app
 WORKDIR /app
 RUN mkdir data
+
+#we write to datadir so we (application user) own it
+RUN chown "${UID}":"${GID}" data 
 
 ENTRYPOINT [ "/app/bin/bitcoind"]

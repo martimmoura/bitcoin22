@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: btc22
+  name: btc22
+  namespace: btc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: btc22
+  template:
+    metadata:
+      labels:
+        app: btc22
+    spec:
+      containers:
+      - image: busybox
+        name: btc
+        volumeMounts:
+        - mountPath: "/var/www/html"
+          name: btc-pvc
+        resources: {}
+      volumes:
+      - name: btc-pvc
+        persistentVolumeClaim:
+          claimName: btc-pvc
+
+status: {}

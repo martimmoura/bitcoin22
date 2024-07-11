@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: btc-pvc
+  namespace: btc
+spec:
+  storageClassName: ebs-sc # Empty string must be explicitly set otherwise default StorageClass will be set
+  volumeName: btc-pv
+  resources:
+    requests:
+      storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
