@@ -27,7 +27,7 @@ jobs:
       working-directory: ./k8s
       run: aws eks --region us-east-2 update-kubeconfig --name bitcoin-eks-t2ZVZtAG
     - name: print kubeconfig
-      run: cat /home/runner/.kube/config & aws --region us-east-2 eks get-token bitcoin-eks-t2ZVZtAG 
+      run: cat /home/runner/.kube/config
     - name: get token
       run: aws --region us-east-2 eks get-token --cluster-name bitcoin-eks-t2ZVZtAG 
     - name: Deploy image version to k8s
