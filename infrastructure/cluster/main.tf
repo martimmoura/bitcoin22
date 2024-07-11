@@ -16,7 +16,7 @@ resource "random_string" "suffix" {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "5.8.1"
+  version = "5.9.0"
 
   name = "bitcoin-vpc"
 
@@ -41,7 +41,7 @@ module "vpc" {
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "20.13.1"
+  version = "20.17.2"
 
   cluster_name    = local.cluster_name
   cluster_version = "1.29"
@@ -52,6 +52,7 @@ module "eks" {
   cluster_addons = {
     aws-ebs-csi-driver = {
       service_account_role_arn = module.irsa-ebs-csi.iam_role_arn
+      resolve_conflicts="PRESERVE"
     }
   }
 
@@ -63,7 +64,6 @@ module "eks" {
 
   }
 
-
   eks_managed_node_groups = {
     regular = {
       name = "regular"
@@ -74,17 +74,6 @@ module "eks" {
       desired_size = 2
       max_size     = 3
     }
-
-    /* accelerated = {
-      name = "ng-accelerated"
-
-      instance_types = ["g5.xlarge"]
-
-      min_size     = 0
-      max_size     = 2
-      desired_size = var.isOn? 1 : 0
-      ami_id = local.gpu_ami
-    } */
   }
 }
 
@@ -94,11 +83,20 @@ data "aws_iam_policy" "ebs_csi_policy" {
 
 module "irsa-ebs-csi" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version = "5.39.0"
+  version = "5.41.0"
 
   create_role                   = true
   role_name                     = "AmazonEKSTFEBSCSIRole-${module.eks.cluster_name}"
   provider_url                  = module.eks.oidc_provider
   role_policy_arns              = [data.aws_iam_policy.ebs_csi_policy.arn]
   oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:ebs-csi-controller-sa"]
+}
+
+resource "aws_ecr_repository" "btc" {
+  name                 = "btc22"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
 }
