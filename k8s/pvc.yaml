@@ -7,6 +7,6 @@ spec:
   storageClassName: ebs-sc # Empty string must be explicitly set otherwise default StorageClass will be set
   resources:
     requests:
-      storage: 8Gi
+      storage: 10Gi #pruned mode only stores ~7Gi of data, should be enough
   accessModes:
     - ReadWriteOnce
